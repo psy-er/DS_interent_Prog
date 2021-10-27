@@ -1,16 +1,18 @@
-{% extends 'blog/base.html' %}
-{% block head_title %}
+{% extends 'blog/base.html' %} <!--{% extends 파일명 %} 바탕이 될 템플릿 파일 지정 원래 위치 : blog/templates/blog/base.html-->
+
+{% block head_title %} <!--블록 시작 1-->
     {{ post.title }} - Blog
-{% endblock %}
-{% block main_area %}
+{% endblock %} <!--블록 끝 1-->
+
+{% block main_area %} <!--블록 시작 2-->
                     <!-- Post content-->
                     <div id="post-area">
                         <!-- Post header-->
                         <header class="mb-4">
                             <!-- Post title-->
                             <h1 class="fw-bolder mb-1">{{ post.title }}</h1>
-                            <h5 class="text_muted"> {{ post.hook_text }}</h5>
-                            <!-- Post meta content-->
+                            <h5 class="text_muted"> {{ post.hook_text }}</h5> <!--color : text_muted , gray 색-->
+                            <!-- Post meta content-->                                   <!--필터 적용하기-->
                             <div class="text-muted fst-italic mb-2">Posted on {{ post.created_at | date:"yy-m-d h:m:s"}} by 작성자(개발예정)</div>
                             <!-- Post categories-->
                             <a class="badge bg-secondary text-decoration-none link-light" href="#!">Web Design</a>
@@ -27,15 +29,15 @@
                         <!-- Post content-->
                         <section class="mb-5">
                             <p> {{ post.content }} </p>
-                            {% if post.file_upload %}
+                            {% if post.file_upload %} <!--다운받을 첨부파일이 있다면(file_upload 필드가 있냐 없냐), download 써줘야 첨부파일 다운가능. 안쓰면 그냥 파일 보여짐-->
                                 <a href="{{post.file_upload.url}}" class="btn btn-outline-dark" role="button" download>
-                                    Download :
+                                    Download :                     <!--부트스트랩 버튼 디자인 적용-->
                                     {% if post.get_file_ext == 'xlsx' or post.get_file_ext == 'xls' %}
-                                        <i class="fas fa-file-excel"></i>
+                                        <i class="fas fa-file-excel"></i> <!--엑셀 아이콘-->
                                     {% elif post.get_file_ext == 'docx' or post.get_file_ext == 'dox' %}
-                                        <i class="fas fa-file-word"></i>
+                                        <i class="fas fa-file-word"></i> <!--워드 아이콘-->
                                     {% else %}
-                                        <i class="fas fa-file"></i>
+                                        <i class="fas fa-file"></i> <!--기본 아이콘-->
                                     {% endif %}
                                     {{ post.get_file_name }}
                                 </a>
@@ -84,5 +86,30 @@
                             </div>
                         </div>
                     </div>
-                </div>
-{% endblock %}
+
+{% endblock %} <!--블록 끝 1-->
+<!--템플릿은 클라이언트에게 보여지는 최종적인 화면은 아니다.
+따라서 ctrl + u로 페이지 소스를 보면 다르다는 것을 알 수 있다.
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title> {{ post.title }} - Blog</title>
+</head>
+<body>
+
+    <nav>
+        <a href="/blog/">Blog</a>
+    <nav>
+
+    <!-템플릿 엔진의 구문 {% %} 사이의 코드는 표현식이고, {{ }}는 출력->
+    <h2>{{ post. title }}</h2>
+    <h4>{{ post.created_at }}</h4>
+    <p> {{ post.content }}</p>
+    <hr/>
+    <h3> 여기에 댓글 추가 </h3>
+
+</body>
+</html>
+-->

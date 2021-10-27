@@ -1,30 +1,35 @@
 {% extends 'blog/base.html' %}
-{% block main_area %}
+{% block main_area %} <!--블록 시작-->
                     <h1>Blog</h1>
-                        {% if post_list.exists %}
+                    {% if post_list.exists %} <!--포스트 리스트가 존재하면-->
                     {% for p in post_list %}
                     <!-- Blog post-->
                     <div class="card mb-4">
-                        {% if p.head_image %}
+                        {% if p.head_image %} <!--이미지가 있다면-->
                             <img class="card-img-top" src="{{ p.head_image.url }}" alt="{{p}}의 head image" />
-                        {% else %}
+                        {% else %} <!--새로고침해도 이미지 고정, 이미지가 없다면, 임의의 이미지 800(가로) 200(세로)-->
                             <img class="card-img-top" src="https://picsum.photos/seed/{{p.id}}/800/200"
                             alt="random image"/>
+
+                            <!--새로고침시, 자동으로 이미지가 같이 바뀜 <img class="card-img-top" src="https://picsum.photos/800/200" alt="random image"/> -->
+
                         {% endif %}
-                        <div class="card-body">
+                        <div class="card-body">         <!--대문자 필터 적용하기, 소문자 = lower-->
                             <h2 class="card-title h4">{{ p.title | upper}}</h2>
                             {% if p.hook_text %}
-                                <h5 class="text_muted">{{ p.hook_text }} </h5>
+                                <h5 class="text_muted">{{ p.hook_text }} </h5> <!--color : text_muted gray 색-->
                             {% endif %}
+                            <!--45문자 truncatechars , 45단어 truncatewords -->
                             <p class="card-text">{{ p.content | truncatewords:45 }}</p>
                             <a class="btn btn-primary" href="{{ p.get_absolute_url }}">Read more →</a>
-                        </div>
+                        </div>                               <!--상세페이지 : p.get_absolute_url-->
                         <div class ="card-footer">
                             <div class="small text-muted">{{ p.created_at | date:"yy-m-d h:m:s"}} by 작성자(개발 예정)</div>
-                        </div>
+                        </div>                              <!--필터 적용하기-->
                     </div>
                     {% endfor %}
-                    {% else %}
+
+                    {% else %} <!--포스트 리스트가 존재하지 않으면-->
                         <h2>아직 게시물이 없습니다.</h2>
                     {% endif %}
                                 <!-- Pagination-->
@@ -34,5 +39,4 @@
                                         <li class="page-item"><a class="page-link" href="#!"> Older &rarr;</a></li>
                                     </ul>
 
-                </div>
-{% endblock %}
+{% endblock %} <!--블록 끝-->

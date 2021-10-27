@@ -19,10 +19,14 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
+# blog 폴더에 urls.py를 생성해서 include 부분 보내줘야함. App폴더에 urls.py 생성해 놨음
+# single_pages 폴더에 urls.py 생성해서 include 부분 보내줘야함.
+#따라서 blog/urls를 만들고 거기에 path 새로 생성
+
 urlpatterns = [
-    path('blog/', include('blog.urls')), # 서버IP/blog
-    path('admin/', admin.site.urls), #서버IP/admin
-    path('', include('single_pages.urls')), #서버IP/
+    path('blog/', include('blog.urls')), #http://서버IP/blog
+    path('admin/', admin.site.urls), #http://서버IP/admin
+    path('', include('single_pages.urls')), #http://서버IP/
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)   #서버IP/media/
