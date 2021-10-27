@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 import os
 
 # 모델 = 데이터를 저장하는 단위, 웹페이지에서 add-post 클릭하면 나오는 기능들 모음
@@ -23,11 +24,13 @@ class Post(models.Model): # Post라는 모델 클래스, 모델 클래스 이름
     # 수정했을 때 업데이트 : auto_now
 
 
-    # author : 사용자 id 연결
+    author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+
+
     # self = 자기 자신을 의미함
 
     def __str__(self): # _str_ 함수로 모델의 string 표현 방법 정의하기, 그냥 {{p}}일 때 출력되는 pk와 title
-        return f'[{self.pk}]{self.title}' # 번호[Primary Key]와 타이틀을 합해 인덱스에 표시
+        return f'[{self.pk}]{self.title} :: {self.author}' # 번호[Primary Key]와 타이틀을 합해 인덱스에 표시
 
 
     def get_absolute_url(self): ## 목록페이지와 상세페이지를 연결함
