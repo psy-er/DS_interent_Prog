@@ -1,7 +1,9 @@
 {% extends 'blog/base.html' %}
 {% block main_area %} <!--블록 시작-->
                     <h1>
-                        Blog {% if category %} <span class="badge bg-secondary">{{category}}</span> {% endif %}
+                        Blog
+                        {% if category %} <span class="badge bg-secondary">{{category}}</span> {% endif %}
+                        {% if tag %} <i class="fas fa-tags"></i><span class="badge bg-light">{{tag}}({{tag.post_set.count}})</span> {% endif %}
                     </h1>
                     {% if post_list.exists %} <!--포스트 리스트가 존재하면-->
                     {% for p in post_list %}
@@ -29,6 +31,13 @@
                             {% endif %}
                             <!--45문자 truncatechars , 45단어 truncatewords -->
                             <p class="card-text">{{ p.content | truncatewords:45 }}</p>
+                            {% if p.tags.exists %}
+                                <i class="fas fa-tags"></i>
+                                {% for tag in p.tags.all %}
+                                    <a href="{{tag.get_absolute_url}}"><span class="badge bg-light">{{tag}}</span></a>
+                                {% endfor %}
+                                <br/><br/>
+                            {% endif %}
                             <a class="btn btn-primary" href="{{ p.get_absolute_url }}">Read more →</a>
                         </div>                               <!--상세페이지 : p.get_absolute_url-->
                         <div class ="card-footer">
