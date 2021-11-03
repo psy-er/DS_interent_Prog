@@ -1,6 +1,8 @@
 {% extends 'blog/base.html' %}
 {% block main_area %} <!--블록 시작-->
-                    <h1>Blog</h1>
+                    <h1>
+                        Blog {% if category %} <span class="badge bg-secondary">{{category}}</span> {% endif %}
+                    </h1>
                     {% if post_list.exists %} <!--포스트 리스트가 존재하면-->
                     {% for p in post_list %}
                     <!-- Blog post-->
