@@ -8,10 +8,12 @@ class TestView(TestCase):
     def setUp(self):
         self.client = Client()
         self.user_james = User.objects.create_user(username='James', password='somepassword')
+        self.user_james.is_staff = True
+        self.user_james.save()
         self.user_trump = User.objects.create_user(username='Trump', password='somepassword')
 
-        self.category_programming = Category.object.create(name = 'programming',slug='programming')
-        self.category_culture = Category.object.create(name='culture', slug='culture')
+        self.category_programming = Category.objects.create(name = 'programming',slug='programming')
+        self.category_culture = Category.objects.create(name='culture', slug='culture')
 
         self.tag_python_kor = Tag.objects.create(name='파이썬 공부',slug='파이썬-공부')
         self.tag_python = Tag.objects.create(name='python',slug='python')
@@ -25,12 +27,14 @@ class TestView(TestCase):
             category = self.category_programming
         )
         self.post_001.tags.add(self.tag_hello)
+
         self.post_002 = Post.objects.create(
             title = '두 번째 포스트입니다.',
             content = '1등이 전부가 아니잖아요',
             author = self.user_trump,
             category = self.category_culture
         )
+
         self.post_003 = Post.objects.create(
             title = '세 번째 포스트입니다.',
             content = '세 번째 포스트입니다.',
@@ -48,19 +52,19 @@ class TestView(TestCase):
         self.assertIn('About Me', navbar.text)
 
         logo = navbar.find('a', text='Internet Programming')
-        self.assertEqual(logo.atrrs['href'], '/')
+        self.assertEqual(logo.attrs['href'], '/')
 
         home = navbar.find('a', text='Home')
-        self.assertEqual(home.atrrs['href'], '/')
+        self.assertEqual(home.attrs['href'], '/')
 
         blog = navbar.find('a', text='Blog')
-        self.assertEqual(blog.atrrs['href'], '/blog/')
+        self.assertEqual(blog.attrs['href'], '/blog/')
 
         about = navbar.find('a', text='About Me')
-        self.assertEqual(about.atrrs['href'], '/about_me/')
+        self.assertEqual(about.attrs['href'], '/about_me/')
 
-    def category_test(self,soup):
-        category = soup.find('div',id = 'categories-card')
+    def category_test(self, soup):
+        category = soup.find('div',id='categories-card')
         self.assertIn('Categories',category.text)
         self.assertIn(f'{self.category_programming.name} ({self.category_programming.post_set.count()})', category.text)
         self.assertIn(f'{self.category_culture.name} ({self.category_culture.post_set.count()})', category.text)
@@ -77,7 +81,7 @@ class TestView(TestCase):
         self.category_test(soup)
 
         # 카테고리 name을 포함하고 있는지
-        self.asserIn(self.category_programming.name,soup.h1.text)
+        self.assertIn(self.category_programming.name,soup.h1.text)
 
         # 카테고리에 포함된 post만 포함하고 있는지
         main_area = soup.find('div', id='main-area')
@@ -97,7 +101,7 @@ class TestView(TestCase):
         self.category_test(soup)
 
         # 카테고리 name을 포함하고 있는지
-        self.asserIn(self.tag_hello.name,soup.h1.text)
+        self.assertIn(self.tag_hello.name,soup.h1.text)
 
         # 카테고리에 포함된 post만 포함하고 있는지
         main_area = soup.find('div', id='main-area')
@@ -114,7 +118,12 @@ class TestView(TestCase):
         self.client.login(username ='Trump',password='somepassword')
         response = self.client.get('/blog/create_post/')
         # 정상적으로 페이지가 로드
-        self.assertEqual(response.status_code, 200)  # 상태가 200과 같은가?
+        self.assertNotEqual(response.status_code, 200)  # 상태가 200과 같은가?
+
+        self.client.login(username='James', password='somepassword')
+        response = self.client.get('/blog/create_post/')
+        self.assertEqual(response.status_code, 200)
+
         # 페이지 타이틀 'Blog'
         soup = BeautifulSoup(response.content, 'html.parser')
         self.assertEqual(soup.title.text, 'Create Post - Blog')  # soup 이 받은 분석된 내용의 제목이 'Blog'와 같은가?
@@ -128,7 +137,7 @@ class TestView(TestCase):
                         })
         last_post = Post.objects.last()
         self.assertEqual(last_post.title, "Post form 만들기")
-        self.assertEqual(last_post.author.username,'Trump')
+        self.assertEqual(last_post.author.username,'James')
 
     def test_post_list(self):
         self.assertEqual(Post.objects.count(),3)
@@ -146,7 +155,7 @@ class TestView(TestCase):
 
         # 포스트(게시물)의 타이틀이 3개 존재하는가
         main_area = soup.find('div', id='main-area')
-        self.assertIn('아직 게시물이 없습니다.', main_area.text)
+        self.assertNotIn('아직 게시물이 없습니다.', main_area.text)
 
         main_area = soup.find('div', id='main-area') # 앞에서 받은 soup html 분석 결과에서 <div> 태그에 id가 'main-area'인것을 find 찾는다
 
@@ -176,8 +185,8 @@ class TestView(TestCase):
         self.assertIn(self.user_trump.username.upper(), main_area.text)
 
         # 포스트(게시물)이 하나도 없는 경우에
-        Post.objects.all().delete
-        self.assertEqual(Post.objects.count(), 0)  # Post 모델 import
+        Post.objects.all().delete()
+        self.assertEqual(Post.objects.count(), 0)
         # 포스트 목록 페이지를 가져온다
         response = self.client.get('/blog/')
         # 정상적으로 페이지가 로드
@@ -208,8 +217,8 @@ class TestView(TestCase):
         self.assertIn(self.post_001.title, post_area.text) # 위에 코드 복붙
         self.assertIn(self.post_001.category.name, post_area.text) # 위에 코드 복붙
         self.assertIn(self.tag_hello.name, post_area.text)
-        self.assertIn(self.tag_python.name, post_area.text)
-        self.assertIn(self.tag_python_kor.name, post_area.text)
+        self.assertNotIn(self.tag_python.name, post_area.text)
+        self.assertNotIn(self.tag_python_kor.name, post_area.text)
 
         # 포스트 작성자가 있는가
         # 아직 작성중
