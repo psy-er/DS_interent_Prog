@@ -27,6 +27,7 @@ urlpatterns = [
     path('blog/', include('blog.urls')), #http://서버IP/blog
     path('admin/', admin.site.urls), #http://서버IP/admin
     path('', include('single_pages.urls')), #http://서버IP/
+    path('markdownx/',include('markdownx.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)   #서버IP/media/

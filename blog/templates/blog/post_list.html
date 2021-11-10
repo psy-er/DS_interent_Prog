@@ -38,7 +38,7 @@
                                 <h5 class="text_muted">{{ p.hook_text }} </h5> <!--color : text_muted gray 색-->
                             {% endif %}
                             <!--45문자 truncatechars , 45단어 truncatewords -->
-                            <p class="card-text">{{ p.content | truncatewords:45 }}</p>
+                            <p class="card-text">{{ p.get_content_markdown | truncatewords_html:50 |safe}}</p>
                             {% if p.tags.exists %}
                                 <i class="fas fa-tags"></i>
                                 {% for tag in p.tags.all %}
