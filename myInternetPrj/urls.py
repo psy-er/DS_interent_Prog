@@ -27,6 +27,7 @@ urlpatterns = [
     path('blog/', include('blog.urls')), #http://서버IP/blog
     path('admin/', admin.site.urls), #http://서버IP/admin
     path('', include('single_pages.urls')), #http://서버IP/
+    path('accounts/',include('allauth.urls')),
     path('markdownx/',include('markdownx.urls'))
 ]
 
