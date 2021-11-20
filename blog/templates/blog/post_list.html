@@ -13,31 +13,29 @@
                         {% if category %} <span class="badge bg-secondary">{{category}}</span> {% endif %}
                         {% if tag %} <i class="fas fa-tags"></i><span class="badge bg-light">{{tag}}({{tag.post_set.count}})</span> {% endif %}
                     </h1>
-                    {% if post_list.exists %} <!--포스트 리스트가 존재하면-->
+                    {% if post_list.exists %}
                     {% for p in post_list %}
                     <!-- Blog post-->
                     <div class="card mb-4" id="post-{{p.pk}}">
-                        {% if p.head_image %} <!--이미지가 있다면-->
+                        {% if p.head_image %}
                             <img class="card-img-top" src="{{ p.head_image.url }}" alt="{{p}}의 head image" />
-                        {% else %} <!--새로고침해도 이미지 고정, 이미지가 없다면, 임의의 이미지 800(가로) 200(세로)-->
+                        {% else %}
                             <img class="card-img-top" src="https://picsum.photos/seed/{{p.id}}/800/200"
                             alt="random image"/>
-
-                            <!--새로고침시, 자동으로 이미지가 같이 바뀜 <img class="card-img-top" src="https://picsum.photos/800/200" alt="random image"/> -->
 
                         {% endif %}
                         <div class="card-body">
                             {% if p.category %}
-                                <span class="badge bg-secondary float-right">{{p.category}}</span><!--대문자 필터 적용하기, 소문자 = lower-->
+                                <span class="badge bg-secondary float-right">{{p.category}}</span>
                             {% else %}
                                 <span class="badge bg-secondary float-right">미분류</span>
                             {% endif %}
 
                             <h2 class="card-title h4">{{ p.title | upper}}</h2>
                             {% if p.hook_text %}
-                                <h5 class="text_muted">{{ p.hook_text }} </h5> <!--color : text_muted gray 색-->
+                                <h5 class="text_muted">{{ p.hook_text }} </h5>
                             {% endif %}
-                            <!--45문자 truncatechars , 45단어 truncatewords -->
+
                             <p class="card-text">{{ p.get_content_markdown | truncatewords_html:50 |safe}}</p>
                             {% if p.tags.exists %}
                                 <i class="fas fa-tags"></i>
@@ -47,21 +45,42 @@
                                 <br/><br/>
                             {% endif %}
                             <a class="btn btn-primary" href="{{ p.get_absolute_url }}">Read more →</a>
-                        </div>                               <!--상세페이지 : p.get_absolute_url-->
-                        <div class ="card-footer">
-                            <div class="small text-muted">{{ p.created_at | date:"20y-m-d h:m:s"}} by {{p.author |upper}}</div>
-                        </div>                       <!--필터 적용하기-->
-                    </div>
-                    {% endfor %}
 
-                    {% else %} <!--포스트 리스트가 존재하지 않으면-->
+                        </div>
+                        <div class ="card-footer">
+                            <div class="small text-muted">{{ p.created_at | date:"20y-m-d h:m:s"}} by {{p.author |upper}}
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {% endfor %}
+                    {% else %}
                         <h2>아직 게시물이 없습니다.</h2>
                     {% endif %}
-                                <!-- Pagination-->
 
-                                    <ul class="pagination justify-content-center my-4">
-                                        <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true"> &larr; Newer</a></li>
-                                        <li class="page-item"><a class="page-link" href="#!"> Older &rarr;</a></li>
-                                    </ul>
+                    <!-- Pagination-->
+                    {% if is_paginated %}
 
-{% endblock %} <!--블록 끝-->
+                    <ul class="pagination justify-content-center my-4">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{page_obj.previous_page_number}}" tabindex="-1" aria-disabled="true"> &larr; Newer</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true"> &larr; Newer</a>
+                        </li>
+                        {% endif %}
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{page_obj.next_page_number}}"> Older &rarr;</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#!"> Older &rarr;</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+{% endblock %}

@@ -91,7 +91,7 @@ class TestView(TestCase):
         self.assertIn('두번째 댓글입니다.', new_comment_div.text)
 
 
-    def navba_test(self, soup):
+    def navbar_test(self, soup):
         # 네비게이션바가 있다
         navbar = soup.nav
 
@@ -266,7 +266,7 @@ class TestView(TestCase):
         post_001_card = main_area.find('div', id='post-1')
         self.assertIn(self.post_001.title, post_001_card.text) # main_area의 텍스트에서 post_001의 제목이 포함되는가?
         self.assertIn(self.post_001.category.name, post_001_card.text)
-        self.assertIn(self.tag_hello.name,post_001_card.text)
+        self.assertIn(self.tag_hello.name, post_001_card.text)
         self.assertNotIn(self.tag_python.name, post_001_card.text)
         self.assertNotIn(self.tag_python_kor.name, post_001_card.text)
 
