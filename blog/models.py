@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 import os
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdown
+
 class Tag(models.Model):
     name = models.CharField(max_length=50,unique=True)
     slug = models.SlugField(max_length=200,unique=True,allow_unicode=True)
@@ -53,6 +54,11 @@ class Post(models.Model):
     def get_file_name(self):
         return os.path.basename(self.file_upload.name)
 
+    def get_avatar_url(self):
+        if self.author.socialaccount_set.exists():
+            return self.author.socialaccount_set.first().get_avatar_url()
+        else :
+            return 'https://doitdjango.com/avatar/id/367/f8b6bb3fdf643ed8/svg/{self.author.email}/'
 
     ## 2. 파일 업로드 함수, 확장자 가지고옴
 
